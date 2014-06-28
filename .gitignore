@@ -1,6 +1,6 @@
 pom.xml
 pom.xml.asc
-*jar
+*.jar
 /lib/
 /classes/
 /target/
@@ -10,4 +10,6 @@ pom.xml.asc
 .lein-plugins/
 .lein-failures
 *.iml
+*.ipr
+*.iws
 .idea/
