@@ -19,7 +19,7 @@ public class Test {
       if (sock != null) {
         try {
           sock.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
       }
     }

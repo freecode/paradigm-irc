@@ -24,9 +24,9 @@ public class IrcListener {
     return argTypes.get(command);
   }
 
-  public void onPING(IrcConnection connection, String server) { }
+  public void onPing(IrcConnection connection, String server) { }
 
-  public void onPRIVMSG(IrcConnection connection, String target, String message) { }
+  public void onPrivmsg(IrcConnection connection, String target, String message) { }
 
   //public void onNumeric(IrcConnection connection, int numeric, String target, String content) { }
 }
