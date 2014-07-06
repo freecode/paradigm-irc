@@ -9,6 +9,8 @@ import javax.swing.border.LineBorder;
 public class J2DFrontend {
 	public static final String APP_NAME = "paradigm irc";
 
+	public static final String RESOURCES_PATH = "resources/";
+
 	private static void startUI() {
 		AppPanel panel = new AppPanel();
 

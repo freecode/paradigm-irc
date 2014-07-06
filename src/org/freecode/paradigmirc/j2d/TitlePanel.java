@@ -32,5 +32,10 @@ public class TitlePanel implements UiPanel {
 		g.setColor(Colors.TITLE);
 		int width = fm.stringWidth(J2DFrontend.APP_NAME);
 		g.drawString(J2DFrontend.APP_NAME, x + w / 2 - width / 2, y + h / 2);
+
+		Font oldFont = g.getFont();
+		g.setFont(FontAwesome.getFont());
+		g.drawString(FontAwesome.ARROW_DOWN + "   " + FontAwesome.ARROW_UP + "   " + FontAwesome.EXIT, x + w - 65, y + h / 2);
+		g.setFont(oldFont);
 	}
 }
