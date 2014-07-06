@@ -53,6 +53,10 @@ public class IrcConnection {
 	}
 
 	private void processOneLine(String line) {
+		if (listener == null) {
+			return;
+		}
+
 		int firstSpace = line.indexOf(' ');
 		if (firstSpace == -1) {
 			return;
@@ -61,23 +65,24 @@ public class IrcConnection {
 		int colon = line.indexOf(':', 1);
 		String[] parts;
 
-		String from = null, command = null, target = null;
-		String longParam = null;
+		IncomingCommand.Builder builder = new IncomingCommand.Builder();
+
+		String command = null;
 
 		if (colon != -1) {
 			String shortLine = line.substring(0, colon);
 			parts = shortLine.split(" ");
 			if (colon == line.length() - 1) {
-				longParam = "";
+				builder.setContent("");
 			} else {
-				longParam = line.substring(colon + 1);
+				builder.setContent(line.substring(colon + 1));
 			}
 		} else {
 			parts = line.split(" ");
 		}
 
 		if (parts[0].startsWith(":")) {
-			from = parts[0].substring(1);
+			builder.setFrom(parts[0].substring(1));
 		} else {
 			command = parts[0];
 		}
@@ -86,33 +91,35 @@ public class IrcConnection {
 			command = parts[1];
 		}
 
+		IrcCommand ic = IrcCommand.get(command);
+
+		if(ic == null) {
+			System.err.println("I don't know what " + command + " is");
+			return;
+		}
+
+		builder.setType(ic);
+		if(ic == IrcCommand.NUMERIC) {
+			builder.setNumeric(Integer.parseInt(command));
+		}
+
 		if (parts.length > 2) {
-			target = parts[2];
+			builder.setTarget(parts[2]);
 		}
 
 		if (parts.length > 3) {
 			String[] others = new String[parts.length - 3];
 			System.arraycopy(parts, 3, others, 0, others.length);
+			builder.setExtras(others);
 		}
-
-		System.out.println("from=" + from + ", command=" + command + ", target=" + target + ", longParam=" + longParam);
-
-		if (listener == null) {
-			return;
-		}
-
-		IrcCommand ic = IrcCommand.get(command);
 
 		try {
-
-			Class<?>[] types = IrcListener.getArgTypes(ic);
-			Class<?>[] all = new Class[types.length + 1];
-			all[0] = IrcListener.class;
-			System.arraycopy(types, 0, all, 1, types.length);
-			Method method = listener.getClass().getMethod("on" + ic.name(), all);
-			method.invoke(listener);
+			Class<?>[] types = { IrcConnection.class, IncomingCommand.class };
+			Method method = listener.getClass().getMethod("on" + ic.name(), types);
+			method.invoke(listener, this, builder.get());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("I couldn't find " + listener.getClass().getSimpleName() + ".on" + ic.name() + "()");
+			// e.printStackTrace();
 		}
 	}
 }

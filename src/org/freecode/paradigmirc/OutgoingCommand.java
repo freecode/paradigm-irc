@@ -1,9 +1,9 @@
 package org.freecode.paradigmirc;
 
-public class PreparedCommand {
+public class OutgoingCommand {
 	private String command;
 
-	public PreparedCommand(String command) {
+	public OutgoingCommand(String command) {
 		this.command = command;
 	}
 
